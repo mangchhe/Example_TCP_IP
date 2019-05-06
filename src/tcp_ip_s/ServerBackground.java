@@ -7,37 +7,26 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.util.Scanner;
 
+
 public class ServerBackground {
     
-    ServerSocket serverSocket;
-    Socket socket;
-    DataInputStream in;
-    DataOutputStream out;
-    Scanner sc = new Scanner(System.in);
-    String msg;
+    private ServerSocket serverSocket;
+    private Socket socket;
+    private Scanner sc = new Scanner(System.in);
     
     public void setting(){
         try{
-            
             serverSocket = new ServerSocket(7777);
-            System.out.println("접속 대기중");
-            socket=serverSocket.accept();
-            System.out.println(socket.getInetAddress()+"님께서 접속하셨습니다.");
-        
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-            
-            abc a=new abc(socket);
-            a.start();
-        
-            while(in!=null){
-                System.out.println("고객님 말씀 : "+in.readUTF());
-            //    out.writeUTF(sc.nextLine());
-            }
-        
+            while(true){
+                System.out.println("접속 대기중");
+                socket=serverSocket.accept();
+                System.out.println(socket.getInetAddress()+"님께서 접속하셨습니다.");
+                Access a=new Access(socket);
+                a.start();
+            }        
         
         }catch(IOException e){
-            System.out.println(socket.getInetAddress()+"님께서 퇴장하셨습니다.");
+            e.printStackTrace();
         }
     }
     
@@ -48,30 +37,30 @@ public class ServerBackground {
         
     }
     
-    class abc extends Thread{
-        
-       // DataInputStream in;
-        //DataOutputStream out;
-       // Socket socket;
-        
-        public abc(Socket socket){
+    class Access extends Thread{
+
+    private DataInputStream in;
+    private DataOutputStream out;
+    private String nickName;
+    
+        public Access(Socket socket){
             try{
                 in = new DataInputStream(socket.getInputStream());
-                //out = new DataOutputStream(socket.getOutputStream());
+                out = new DataOutputStream(socket.getOutputStream());           
             }catch(IOException e){
                 e.printStackTrace();
             }
         }
         
         public void run(){
-            while(out!=null){
-                try{
-                    out.writeUTF(sc.nextLine());
-                }catch(Exception e){
-                    e.printStackTrace();
+            try {                
+                nickName=in.readUTF();
+                while(true){            
+                    System.out.println(nickName + " : " + in.readUTF());
                 }
-            }    
+            } catch (IOException e) {
+                System.out.println(nickName+"님께서 퇴장하셨습니다.");
+            }
         }
     }
-    
 }
