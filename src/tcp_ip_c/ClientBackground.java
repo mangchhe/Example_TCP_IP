@@ -12,7 +12,7 @@ public class ClientBackground {
     DataInputStream in;
     DataOutputStream out;
     Scanner sc = new Scanner(System.in);
-    String msg;
+    Receiver receiver = new Receiver();
     
     public void connect(){
         
@@ -23,9 +23,14 @@ public class ClientBackground {
             
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            
+            System.out.println("닉네임 입력해주세요");
+            out.writeUTF(sc.nextLine());
+            
+            receiver.start();
+            
             while(out!=null){
-                System.out.println("서버님에 말씀 : "+in.readUTF());
-                //out.writeUTF(sc.nextLine());
+                out.writeUTF(sc.nextLine());
             }
         
             
@@ -41,4 +46,16 @@ public class ClientBackground {
         clientBackground.connect();
     }
     
+    class Receiver extends Thread{
+    	public void run() {
+    		while(true) {
+    			try {
+    				System.out.println(in.readUTF());
+    			}catch(IOException e) {
+    				System.out.println("서버와의 연결이 끊겼습니다.");
+    				break;
+    			}
+    		}
+    	}
+    }
 }

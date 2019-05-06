@@ -35,16 +35,25 @@ public class User extends Thread {
     
     public void run(){
         while(true){
-        echoMsg=sc.nextLine();
-        Iterator it=user.keySet().iterator();
-        while(it.hasNext()){
-            nickName=(String)it.next();
-            try {
-                user.get(nickName).writeUTF("서버 : " + echoMsg);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }            
-        }
+            echoMsg=sc.nextLine();
+            Iterator it=user.keySet().iterator();
+            if(echoMsg.equals("user")){
+                while(it.hasNext()){
+                    nickName=(String)it.next();
+                    System.out.println("userName" + " : " + nickName);
+                }
+                System.out.println("총 "+user.size()+"명");                
+            }
+            else{
+                while(it.hasNext()){
+                    nickName=(String)it.next();
+                    try {
+                        user.get(nickName).writeUTF("서버 : " + echoMsg);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }            
+                }
+            }
         }
     }
 }
