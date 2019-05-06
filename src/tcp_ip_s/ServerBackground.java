@@ -13,10 +13,12 @@ public class ServerBackground {
     private ServerSocket serverSocket;
     private Socket socket;
     private Scanner sc = new Scanner(System.in);
+    private User user = new User();
     
     public void setting(){
         try{
             serverSocket = new ServerSocket(7777);
+            user.start();
             while(true){
                 System.out.println("접속 대기중");
                 socket=serverSocket.accept();
@@ -55,11 +57,13 @@ public class ServerBackground {
         public void run(){
             try {                
                 nickName=in.readUTF();
+                user.AddClient(nickName, socket);
                 while(true){            
                     System.out.println(nickName + " : " + in.readUTF());
                 }
             } catch (IOException e) {
                 System.out.println(nickName+"님께서 퇴장하셨습니다.");
+                user.RemoveClient(nickName);
             }
         }
     }
